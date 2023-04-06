@@ -1,41 +1,22 @@
-name: fix code styling
+name: Coding Style PHP
 
 on:
   workflow_call:
-    inputs:
-      php:
-        default: "8.1"
-        type: string
-      message:
-        default: Fix code styling
-        type: string
-      fix:
-        default: true
-        type: boolean
 
 jobs:
-  lint:
+  coding-style:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: actions/checkout@v3
         with:
-          php-version: ${{ inputs.php }}
-          extensions: json, dom, curl, libxml, mbstring
-          coverage: none
+          fetch-depth: 2
+      - name: "laravel-pint"
+        uses: aglipanci/laravel-pint-action@0.1.0
+        with:
+          preset: laravel
 
-      - name: Install Pint
-        run: composer global require laravel/pint
-
-      - name: Run Pint
-        run: pint
-
-      - name: Commit linted files
-        if: ${{ inputs.fix }}
+      - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: ${{ inputs.message }}
+          commit_message: coding style fixed (Pint)
+          skip_fetch: true
